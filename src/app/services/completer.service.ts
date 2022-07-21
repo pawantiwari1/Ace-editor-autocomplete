@@ -23,7 +23,7 @@ const convertToCompletion = (data: MetaInfoModel, parent?: string) => {
     type,
     parent,
     description: data.Description,
-    inputParameters: isMethod ? data.InputParameters : {}
+    inputParameters: isMethod ? data.InputParameters : {},
   };
   let snippet = '';
   if (isMethod) {
@@ -43,7 +43,8 @@ const convertToCompletion = (data: MetaInfoModel, parent?: string) => {
 };
 
 @Injectable()
-export class CompleterService implements ICompleter {
+export class CompleterService {
+  //implements ICompleter
   private completions: { [name: string]: CompletionModel[] } = {};
   private completionsTree: { [name: string]: string[] } = {};
   private roots: string[] = [];
@@ -56,6 +57,7 @@ export class CompleterService implements ICompleter {
   constructor() {}
 
   setMetadata(meta: MetaInfoModel[]): void {
+    console.log('completor ', meta);
     const register = (name: string, item: MetaInfoModel, parent?: string) => {
       if (!this.completions[name]) {
         this.completions[name] = [];
@@ -65,10 +67,14 @@ export class CompleterService implements ICompleter {
     const getItems = (item: MetaInfoModel, parentId: string = null) => {
       register(item.Name, item, parentId);
       const children = item.Children || [];
-      this.completionsTree[item.Name] = children.map(x => x.Name);
+      this.completionsTree[item.Name] = children.map((x) => x.Name);
 
-      const methods = children.filter(x => x.hasOwnProperty('InputParameters'));
-      const props = children.filter(x => !x.hasOwnProperty('InputParameters'));
+      const methods = children.filter((x) =>
+        x.hasOwnProperty('InputParameters')
+      );
+      const props = children.filter(
+        (x) => !x.hasOwnProperty('InputParameters')
+      );
 
       for (const child of methods) {
         register(child.Name, child, item.Name);
@@ -82,7 +88,6 @@ export class CompleterService implements ICompleter {
     for (const field of meta) {
       this.roots.push(field.Name);
       getItems(field);
-      
     }
   }
 
@@ -93,6 +98,7 @@ export class CompleterService implements ICompleter {
     prefix: string,
     callback: (data: any | null, completions: CompletionModel[]) => void
   ): void {
+    debugger;
     const completions: CompletionModel[] = [];
     const parentId = this._getParentId(
       session.getLine(pos.row),
@@ -132,6 +138,8 @@ export class CompleterService implements ICompleter {
   }
 
   getDocTooltip(item: CompletionModel): void {
+    console.log('get doc type ', item);
+    debugger;
     if (item.type === 'snippet') {
       if (item.type === 'snippet' && !item.docHTML) {
         item.docHTML = [
@@ -139,13 +147,13 @@ export class CompleterService implements ICompleter {
           item.caption,
           '</b>',
           '<hr></hr>',
-          item.snippet
+          item.snippet,
         ].join('');
       }
     }
     if (item.inputParameters) {
       let signature = Object.keys(item.inputParameters)
-        .map(x => `${x} ${item.inputParameters[x]}`)
+        .map((x) => `${x} ${item.inputParameters[x]}`)
         .join(', ');
 
       if (signature) {
@@ -197,7 +205,7 @@ export class CompleterService implements ICompleter {
           caption,
           snippet: s.content,
           meta: s.tabTrigger && !s.name ? s.tabTrigger + '\u21E5 ' : 'snippet',
-          type: 'snippet'
+          type: 'snippet',
         });
       }
     }
@@ -237,7 +245,7 @@ export class CompleterService implements ICompleter {
     const children = this.completionsTree[parentId] || [];
     const result = [];
     for (const child of children) {
-      const item = this.completions[child].find(x => x.parent === parentId);
+      const item = this.completions[child].find((x) => x.parent === parentId);
       if (item) {
         result.push(item);
       }
@@ -246,9 +254,7 @@ export class CompleterService implements ICompleter {
   }
 
   private _getParentId(line: string, column: number, prefix: string): string {
-    const reversed = Array.from(line)
-      .reverse()
-      .join('');
+    const reversed = Array.from(line).reverse().join('');
     const newPos = line.length - (column - prefix.length);
 
     const sub = reversed.substring(newPos);
@@ -258,10 +264,8 @@ export class CompleterService implements ICompleter {
 
     const splitted = sub.substring(1).split('.');
     if (splitted.length > 0) {
-      let value = Array.from(splitted[0])
-        .reverse()
-        .join('');
-      ['(', '[', ' '].forEach(token => {
+      let value = Array.from(splitted[0]).reverse().join('');
+      ['(', '[', ' '].forEach((token) => {
         const index = value.lastIndexOf(token);
         if (index > -1) {
           value = value.substring(index + 1);
@@ -274,7 +278,7 @@ export class CompleterService implements ICompleter {
   }
 
   private _getRoots(): CompletionModel[] {
-    return this.roots.map(x => this.completions[x][0]);
+    return this.roots.map((x) => this.completions[x][0]);
   }
 
   getSnippet(item: string) {
@@ -285,7 +289,7 @@ export class CompleterService implements ICompleter {
     const [parentId, itemId] = parsed;
     const children = this._getChildren(parentId);
     const found = children.find(
-      x => x.caption.toLocaleLowerCase() === itemId.toLowerCase()
+      (x) => x.caption.toLocaleLowerCase() === itemId.toLowerCase()
     );
     return found ? found.snippet : null;
   }

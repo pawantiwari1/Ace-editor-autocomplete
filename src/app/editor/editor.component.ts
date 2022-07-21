@@ -4,7 +4,8 @@ import {
   ViewChild,
   AfterViewInit,
   Input,
-  OnDestroy
+  OnDestroy,
+  Inject,
 } from '@angular/core';
 
 import { CompleterService } from './../services/completer.service';
@@ -19,7 +20,7 @@ import 'brace/theme/monokai';
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
-  styleUrls: ['./editor.component.css']
+  styleUrls: ['./editor.component.css'],
 })
 export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input()
@@ -28,22 +29,31 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   options = {
     enableBasicAutocompletion: true,
     enableLiveAutocompletion: true,
-    enableSnippets: true
+    enableSnippets: true,
   };
 
   @ViewChild('editor', { static: true })
   editor: any;
 
-  constructor(private completer: CompleterService) {}
+  constructor(@Inject(CompleterService) completer: CompleterService) {
+    console.log('meta info ', this.metaInfo);
+    setTimeout(() => {
+      completer.setMetadata(this.metaInfo);
+      const langTools = ace.acequire('ace/ext/language_tools');
+      console.log('ace language tool ', langTools);
+      langTools.setCompleters([completer]);
+    }, 400);
+  } //private completer: CompleterService
 
   ngOnInit() {
-    this.completer.setMetadata(this.metaInfo);
+    console.log('meta info ', this.metaInfo);
+    // completer.setMetadata(this.metaInfo);
   }
 
   ngAfterViewInit() {
-    const langTools = ace.acequire('ace/ext/language_tools');
-
-    langTools.setCompleters([this.completer]);
+    // const langTools = ace.acequire('ace/ext/language_tools');
+    // console.log("ace language tool ",langTools);
+    // langTools.setCompleters([this.completer]);
   }
 
   ngOnDestroy(): void {
@@ -53,7 +63,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     langTools.setCompleters([
       textCompleter,
       keyWordCompleter,
-      snippetCompleter
+      snippetCompleter,
     ]);
   }
 

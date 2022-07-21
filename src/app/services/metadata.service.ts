@@ -6,18 +6,66 @@ import { MetaInfoModel } from './../models/metadata.model';
 
 const metainfo: MetaInfoModel[] = [
   {
-    Name: 'String',
+    Name: 'rajan',
+    Children: [],
+    Description: 'rajan test keyword',
+    Type: 'keyword',
+  },
+  {
+    Name: 'Employee id',
     Children: [
       {
         Name: 'Equal',
         Description: 'is string equal',
         Children: [],
         Type: 'bool',
-        InputParameters: { otherString: 'string' }
-      }
+        InputParameters: { otherString: 'string' },
+      },
     ],
     Description: '',
-    Type: 'string'
+    Type: 'string',
+  },
+  {
+    Name: 'Employee Age',
+    Children: [
+      {
+        Name: 'Equal',
+        Description: 'is string equal',
+        Children: [],
+        Type: 'bool',
+        InputParameters: { otherString: 'string' },
+      },
+    ],
+    Description: '',
+    Type: 'string',
+  },
+  {
+    Name: 'Salary',
+    Children: [
+      {
+        Name: 'Equal',
+        Description: 'is string equal',
+        Children: [],
+        Type: 'bool',
+        InputParameters: { otherString: 'string' },
+      },
+    ],
+    Description: '',
+    Type: 'string',
+  },
+  {
+    Name: 'Credit Score',
+    Children: [
+      {
+        Name: 'Equal',
+        Description: 'is string equal',
+        Children: [],
+        Type: 'bool',
+        InputParameters: { otherString: 'string' },
+      },
+    ],
+    Description: '',
+    Type: 'string',
   },
   {
     Name: 'WebApi',
@@ -28,25 +76,25 @@ const metainfo: MetaInfoModel[] = [
         Description: 'Get role information by unique identifier',
         Type: 'Role',
         Children: [],
-        InputParameters: { roleId: 'int' }
+        InputParameters: { roleId: 'int' },
       },
       {
         Name: 'GetEmployeeById',
         Description: 'get employee information by unique identifier',
         Type: 'Employee',
         Children: [],
-        InputParameters: { employeeId: 'int' }
+        InputParameters: { employeeId: 'int' },
       },
       {
         Name: 'AssignRoleToEmployee',
         Description: 'assign role for employee',
         Type: 'void',
         Children: [],
-        InputParameters: { roleId: 'int', employeeId: 'int' }
-      }
+        InputParameters: { roleId: 'int', employeeId: 'int' },
+      },
     ],
-    Type: 'class'
-  }
+    Type: 'class',
+  },
 ];
 
 @Injectable()
