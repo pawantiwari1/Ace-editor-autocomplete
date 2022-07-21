@@ -7,6 +7,5 @@ export interface CompletionModel {
   value?: string;
   parent?: string;
   docHTML?: string;
-  // Входные параметры. Где ключ - имя параметры, значение - тип
   inputParameters?: { [name: string]: string };
 }
